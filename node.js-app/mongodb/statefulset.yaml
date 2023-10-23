@@ -1,0 +1,94 @@
+apiVersion: v1   
+kind: Service
+metadata:
+  name: mongo
+  labels:
+    name: mongo
+spec:
+  ports:
+  - port: 27017
+    targetPort: 27017
+  clusterIP: None
+  selector:
+    role: mongo
+---
+apiVersion: apps/v1    
+kind: StatefulSet
+metadata:
+  name: mongo
+spec:
+  serviceName: "mongo"
+  replicas: 3
+  selector:
+    matchLabels:
+      role: mongo
+  template:
+    metadata:
+      labels:
+        role: mongo
+        environment: test
+    spec:
+      terminationGracePeriodSeconds: 10
+      volumes:
+         - name: keyfile-volume
+           secret:
+             secretName: mongodb-keyfile
+      containers:
+        - name: mongo
+          image: us-east1-docker.pkg.dev/amira-gcp-402316/project-repo/mongo:4.4
+          command:
+            - mongod
+            - "--replSet"
+            - rs0
+            - --auth
+            - --keyFile
+            - /etc/mongo/keyfile         
+          env:
+          - name: MONGODB_DATABASE
+            value: "ITI"
+          - name: MONGODB_REPLICA_SET_NAME
+            value: "rs0"
+          - name: MONGO_ROOT_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: mongo
+                key: MONGO_ROOT_USERNAME
+          - name: MONGO_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mongodb
+                key: MONGO_ROOT_PASSWORD
+          - name: MONGO_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: mongodb
+                key: MONGO_USERNAME                
+          - name: MONGO_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mongodb
+                key: MONGO_PASSWORD 
+          ports:           
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongo-persistent-storage
+              mountPath: /data/db
+            - name: mongodb-keyfile
+              mountPath: /var/run/secrets/keyfile
+              subPath: ./keyfile
+              readOnly: true              
+        - name: mongo-sidecar
+          image: us-east1-docker.pkg.dev/amira-gcp-402316/project-repo/sidecar:latest
+          env:
+            - name: MONGO_SIDECAR_POD_LABELS
+              value: "role=mongo,environment=test"
+  volumeClaimTemplates:
+  - metadata:
+      name: mongo-persistent-storage
+      annotations:
+        volume.beta.kubernetes.io/storage-class: "fast"
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 50Gi
