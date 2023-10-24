@@ -28,60 +28,52 @@ spec:
         role: mongo
         environment: test
     spec:
+      serviceAccountName: k8s-sa
       terminationGracePeriodSeconds: 10
-      volumes:
-         - name: keyfile-volume
-           secret:
-             secretName: mongodb-keyfile
       containers:
         - name: mongo
-          image: us-east1-docker.pkg.dev/amira-gcp-402316/project-repo/mongo:4.4
-          command:
-            - mongod
+          image: us-east1-docker.pkg.dev/amira-gcp-402316/project-repo/mongo:5.0.15
+          args:
             - "--replSet"
-            - rs0
-            - --auth
-            - --keyFile
-            - /etc/mongo/keyfile         
+            - rs0 
+            - --bind_ip_all
+            - "--auth"            
+            - "--keyFile"
+            - "/keyfile/keyfile"       
           env:
-          - name: MONGODB_DATABASE
-            value: "ITI"
-          - name: MONGODB_REPLICA_SET_NAME
-            value: "rs0"
-          - name: MONGO_ROOT_USERNAME
-            valueFrom:
-              secretKeyRef:
-                name: mongo
-                key: MONGO_ROOT_USERNAME
-          - name: MONGO_ROOT_PASSWORD
+          - name: MONGO_INITDB_ROOT_USERNAME
             valueFrom:
               secretKeyRef:
                 name: mongodb
-                key: MONGO_ROOT_PASSWORD
-          - name: MONGO_USERNAME
+                key: MONGO_INITDB_ROOT_USERNAME
+          - name: MONGO_INITDB_ROOT_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: mongodb
-                key: MONGO_USERNAME                
-          - name: MONGO_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: mongodb
-                key: MONGO_PASSWORD 
+                key: MONGO_INITDB_ROOT_PASSWORD                           
           ports:           
             - containerPort: 27017
           volumeMounts:
             - name: mongo-persistent-storage
-              mountPath: /data/db
-            - name: mongodb-keyfile
-              mountPath: /var/run/secrets/keyfile
-              subPath: ./keyfile
-              readOnly: true              
+              mountPath: /data/db        
         - name: mongo-sidecar
           image: us-east1-docker.pkg.dev/amira-gcp-402316/project-repo/sidecar:latest
           env:
             - name: MONGO_SIDECAR_POD_LABELS
               value: "role=mongo,environment=test"
+            - name: MONGODB_USERNAME
+                valueFrom:
+                  secretKeyRef:
+                    name: mongodb
+                    key: MONGO_INITDB_ROOT_USERNAME
+            - name: MONGODB_PASSWORD
+               valueFrom:
+                 secretKeyRef:
+                    name: mongodb
+                    key: MONGO_INITDB_ROOT_PASSWORD
+            - name: MONGODB_DATABASE
+              value: "admin"           
+           
   volumeClaimTemplates:
   - metadata:
       name: mongo-persistent-storage
