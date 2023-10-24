@@ -1,5 +1,5 @@
 # Base image
-FROM node:14-alpine
+FROM node:20-slim
 
 # Set working directory
 WORKDIR /app
@@ -8,19 +8,18 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-# RUN npm ci --only=production
-RUN npm install --omit=dev
+RUN npm install 
 # Copy the rest of the app files
-COPY . .
+COPY . ./app
 
 # Expose the port
 EXPOSE 3000
 
 # Set environment variables
 ENV WEBport=3000
-# ENV DBuser=<your-db-user>
-# ENV DBpass=<your-db-password>
-# ENV DBhosts=<your-db-hosts>
+ENV DBuser=amira
+ENV DBpass=1234amira
+ENV DBhosts=
 
 # Run the app
-CMD ["node", "app"]
+CMD ["node", "index.js"]
