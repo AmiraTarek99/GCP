@@ -19,7 +19,7 @@ EXPOSE 3000
 ENV WEBport=3000
 ENV DBuser=amira
 ENV DBpass=1234amira
-ENV DBhosts=
+ENV DBhosts=mongo-0.mongo.default.svc.cluster.local:27017 
 
 # Run the app
 CMD ["node", "index.js"]
