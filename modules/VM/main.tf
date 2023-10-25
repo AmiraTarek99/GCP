@@ -7,7 +7,7 @@ resource "google_compute_instance" "private-vm" {
   boot_disk {
     initialize_params{
       //image = var.vm-image
-      image = "projects/amira-gcp-402316/global/images/last-image-from-vm"
+      image = "projects/amira-gcp-402316/global/images/final3"
       size  = 10
       type  = "pd-balanced"
     }

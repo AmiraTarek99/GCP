@@ -2,7 +2,7 @@ resource "google_container_cluster" "privatecluster"{
   //provider = google-beta
   name     = var.cluster-name
   network = var.vpc-id
-  location = "asia-east1"
+  location = "us-east4"
   subnetwork = var.cluster-subnet
   deletion_protection= false
   remove_default_node_pool = true
@@ -37,7 +37,7 @@ resource "google_container_cluster" "privatecluster"{
 resource "google_container_node_pool" "privatecluster-node-pool" {
   name       = var.nodepool-name
   cluster    = google_container_cluster.privatecluster.name
-  location = "asia-east1"
+  location = "us-east4"
   node_count = 1
 
   node_config {
