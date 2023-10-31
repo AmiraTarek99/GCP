@@ -3,9 +3,7 @@ resource "google_compute_router" "myrouter" {
   region  = google_compute_subnetwork.mysubnet[0].region
   network = google_compute_network.myvpc.id
 
-  bgp {
-    asn = 64514
-  }
+
 }
 
 resource "google_compute_router_nat" "mynat" {
@@ -15,8 +13,4 @@ resource "google_compute_router_nat" "mynat" {
   nat_ip_allocate_option             = "AUTO_ONLY"
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
 
-  log_config {
-    enable = true
-    filter = "ERRORS_ONLY"
-  }
 }

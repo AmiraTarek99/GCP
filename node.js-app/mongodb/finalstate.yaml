@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+  labels:
+    name: mongo
+spec:
+  ports:
+    - port: 27017
+      targetPort: 27017
+  clusterIP: None
+  selector:
+    role: mongo
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo
+spec:
+  serviceName: "mongo"
+  replicas: 3
+  selector:
+    matchLabels:
+      role: mongo
+  template:
+    metadata:
+      labels:
+        role: mongo
+        environment: test
+    spec:
+      serviceAccountName: k8s-sa
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: mongo
+          image: us-east1-docker.pkg.dev/amira-gcp-402316/project-repo/mongo:v2
+          args:
+            - "--replSet"
+            - rs0
+            - "--bind_ip_all"
+            - "--auth"
+            - "--keyFile"
+            - "/keyfile/keyfile"
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: "amira"
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: "1234amira"
+            - name: MONGO_INITDB_DATABASE
+              value: "admin"
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongo-persistent-storage
+              mountPath: /data/db
+        - name: mongo-sidecar
+          image: us-east1-docker.pkg.dev/amira-gcp-402316/project-repo/sidecar:v2
+          env:
+            - name: MONGO_SIDECAR_POD_LABELS
+              value: "role=mongo,environment=test"
+            - name: KUBERNETES_MONGO_SERVICE_NAME
+              value: "mongo"            
+            - name: KUBE_NAMESPACE
+              value: "default"
+            - name: MONGODB_USERNAME
+              value: "amira"
+            - name: MONGODB_PASSWORD
+              value: "1234amira"
+            - name: MONGODB_DATABASE
+              value: "admin"
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-persistent-storage
+        annotations:
+          volume.beta.kubernetes.io/storage-class: "fast"
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 50Gi
