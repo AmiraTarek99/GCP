@@ -21,13 +21,11 @@ variable "subnet-region" {
 }
 
 //vm variables
-variable "vm-name" {
+/*variable "vm-name" {
   type = string
 }
 
-variable "machine-type" {
-  type = string
-}
+
 
 variable "vm-image" {
   type = string
@@ -35,7 +33,7 @@ variable "vm-image" {
 
 variable "vm-zone" {
   type = string
-}
+}*/
 
 
 //service account variables
@@ -57,6 +55,9 @@ variable "cluster-roles" {
 
 //cluster variables
 variable "cluster-region" {
+  type = string
+}
+variable "machine-type" {
   type = string
 }
 variable "cluster-name" {

@@ -5,7 +5,7 @@ module "mynetwork" {
   subnet-region              = var.subnet-region
 }
 
-module "myvm" {
+/*module "myvm" {
   source = "./modules/VM"
   vm-name = var.vm-name
   vm-image = var.vm-image
@@ -18,7 +18,7 @@ module "myvm" {
   cluster-region = var.cluster-region 
   project-id = var.project-id
   
-}
+}*/
 
 module "service-account" {
   source = "./modules/ServiceAcounts"

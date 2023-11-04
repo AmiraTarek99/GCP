@@ -3,10 +3,10 @@ project-region = "us-east1"
 subnet-name=["vm-subnet","cluster-subnet"]
 subnet-cidr=["10.0.0.0/24","10.1.0.0/24"]
 subnet-region = ["us-east1","asia-east2"]
-vm-name = "private-vm"
+//vm-name = "private-vm"
 //debian-cloud/debian-11
-vm-image = "ubuntu-os-cloud/ubuntu-2004-lts"
-vm-zone = "us-east1-b"
+//vm-image = "ubuntu-os-cloud/ubuntu-2004-lts"
+//vm-zone = "us-east1-b"
 machine-type = "e2-medium"
 accounts = ["vm-999sa","gke-999sa"]
 roles = ["roles/storage.objectAdmin","roles/container.admin","roles/artifactregistry.repoAdmin","roles/artifactregistry.admin","roles/cloudbuild.builds.editor","roles/storage.admin"]

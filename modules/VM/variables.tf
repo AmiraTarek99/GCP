@@ -1,4 +1,4 @@
-variable "vm-name" {
+/*variable "vm-name" {
   type = string
 }
 variable "machine-type" {
@@ -27,7 +27,7 @@ variable "cluster-name" {
 }
 variable "project-id" {
   type = string
-}
+}*/
 
 
 

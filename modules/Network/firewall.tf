@@ -1,4 +1,4 @@
-resource "google_compute_firewall" "firewall-ssh" {
+/*resource "google_compute_firewall" "firewall-ssh" {
 
   name    = "firewall-ssh"
   network = google_compute_network.myvpc.name
@@ -11,4 +11,4 @@ resource "google_compute_firewall" "firewall-ssh" {
   }
   source_ranges = ["0.0.0.0/0"] //35.235.240.0/20
  
-}
+}*/

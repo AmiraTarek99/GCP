@@ -1,4 +1,4 @@
-resource "google_compute_instance" "private-vm" {
+/*resource "google_compute_instance" "private-vm" {
   name         = var.vm-name
   machine_type = var.machine-type 
   zone         = var.vm-zone
@@ -18,7 +18,7 @@ resource "google_compute_instance" "private-vm" {
     network = var.vpc-id
     subnetwork = var.vm-subnet
   }
-  /*metadata_startup_script = <<EOF
+  metadata_startup_script = <<EOF
   #!/bin/bash
   sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys B53DC80D13EDEF05
   sudo apt-get update
@@ -44,10 +44,10 @@ resource "google_compute_instance" "private-vm" {
   sudo apt-get update
   sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin  gcloud container clusters get-credentials private-cluster --region us-central1 --project amira-gcp-402316  
   docker --version
-  EOF*/
+  EOF
 
   service_account {
     email  = var.vm-email
     scopes = ["cloud-platform"]
   }
-}
+}*/

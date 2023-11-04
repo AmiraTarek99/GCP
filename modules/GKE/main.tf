@@ -8,19 +8,19 @@ resource "google_container_cluster" "privatecluster"{
   remove_default_node_pool = true
   initial_node_count       = 1
 
-  master_authorized_networks_config {
+  /*master_authorized_networks_config {
     cidr_blocks {
         cidr_block = var.authnet-cidr-range
         display_name = var.authnet-name
     }
-    /*cidr_blocks {
+    cidr_blocks {
         cidr_block = var.authnet-mylocal-cidr
         display_name = var.authnet-mylocal-name
-    }*/
-  }
+    }
+  }*/
   private_cluster_config {
-    enable_private_nodes = true
-    enable_private_endpoint = true
+    enable_private_nodes = false
+    enable_private_endpoint = false
     master_global_access_config{enabled = true}
     master_ipv4_cidr_block = var.master-ipv4-cidr-block
   }
