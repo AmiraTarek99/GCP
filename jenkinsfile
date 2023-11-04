@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+
+    parameters {
+        choice choices: ['apply', 'destroy'], name: 'action'
+    }
+    
+    environment {
+        action = "${params.action}"
+        GC_KEY = credentials('gcp-sa-terraform')
+    }
+    
+    stages {
+        stage('Git') {
+            steps {
+                git branch: 'main', url: 'https://github.com/AmiraTarek99/GCP.git'
+            }
+        }
+        
+        stage('init') {
+            steps {
+                sh("gcloud auth activate-service-account --key-file=${GC_KEY}")
+                //sh("gcloud container clusters get-credentials prod --zone us-east1-a --project amira-gcp")
+                sh 'terraform init'
+            }
+        }
+        
+        
+        stage('plan') {
+            steps {
+                sh "terraform plan --var-file values.tfvars"
+            }
+        }
+        
+        stage('action') {
+            steps {
+                sh "terraform ${action} -auto-approve --var-file values.tfvars"
+            }
+        }
+    }
+}

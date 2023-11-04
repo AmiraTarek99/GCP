@@ -1,0 +1,56 @@
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "node"
+  namespace: "default"
+  labels:
+    app: "node"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "node"
+  template:
+    metadata:
+      labels:
+        app: "node"
+    spec:
+      containers:
+      - name: "node-app-sha256-1"
+        image: "us-east1-docker.pkg.dev/amira-gcp-402316/project-repo/node-app@sha256:31b8ef1ca8e314fc4cbf6543a47afc7418c1fc6bc0da14f666ead8442def724f"
+---
+apiVersion: "autoscaling/v2"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "node-hpa-i4a0"
+  namespace: "default"
+  labels:
+    app: "node"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "node"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: "Resource"
+    resource:
+      name: "cpu"
+      target:
+        type: "Utilization"
+        averageUtilization: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-service
+  namespace: default
+spec:
+  type: LoadBalancer
+  selector:
+    app: node
+  ports:
+  - protocol: TCP
+    port: 3000
+    targetPort: 3000
