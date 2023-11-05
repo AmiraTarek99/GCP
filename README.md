@@ -16,6 +16,7 @@ Building our infrastructure on GCP [ Google Cloud Platform ] using terraform :
    pushing docker image to repo.
 
 # App Deployment
+
   By using another jenkins pipeline which connect to the cluster and 
   use kubecl commands to deploy app on the cluster this pipline is running automatically after the first pipline 
   
